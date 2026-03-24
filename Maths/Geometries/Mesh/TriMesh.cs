@@ -183,12 +183,12 @@ namespace Common.Maths
         
         public virtual bool Write(
             BinaryWriter writer,
-            CompressionTransform compression_m,
-            CompressionIndices compression_i,
-            CompressionVertices compression_v,
-            CompressionNormals compression_n,
-            CompressionTexCoord compression_t,
-            CompressionColor compression_c)
+            CompressionTransform compression_m = 0,
+            CompressionIndices compression_i = 0,
+            CompressionVertices compression_v = 0,
+            CompressionNormals compression_n = 0,
+            CompressionTexCoord compression_t = 0,
+            CompressionColor compression_c = 0)
         {
             long begin = writer.BaseStream.Position;
             writer.WriteLong(BaseSignature);
@@ -265,7 +265,7 @@ namespace Common.Maths
             throw new NotImplementedException();
         }
         public virtual bool Write(XmlWriter writer) => Write(writer, 0);
-        public virtual bool Write(XmlWriter writer, CompressionTransform compression_m)
+        public virtual bool Write(XmlWriter writer, CompressionTransform compression_m = 0)
         {
             writer.WriteStartElement("Mesh");
             writer.WriteAttributeString("Name", Name);
