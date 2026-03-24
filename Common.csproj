@@ -1,0 +1,350 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <ProjectGuid>{7E655B04-5914-4F26-9947-81C20B41F049}</ProjectGuid>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Common</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyName>Common</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMore|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\DebugMore\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DEBUGMORE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WarningLevel>2</WarningLevel>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugInDepth|x64'">
+    <OutputPath>bin\x64\DebugInDepth\</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugMore|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\DebugMore\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DEBUGMORE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WarningLevel>2</WarningLevel>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugInDepth|x86'">
+    <OutputPath>bin\x86\DebugInDepth\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Algorithms\3dConvexer.cs" />
+    <Compile Include="Algorithms\MinVolumeBoundingBox.cs" />
+    <Compile Include="Algorithms\PolygonTriangulation.cs" />
+    <Compile Include="Algorithms\Voxelizer.cs" />
+    <Compile Include="Algorithms\Welder.cs" />
+    <Compile Include="Maths\Geometries\Manifold.cs" />
+    <Compile Include="Maths\Geometries\Mesh\Compression.cs" />
+    <Compile Include="Maths\Geometries\Mesh\TriMesh.cs" />
+    <Compile Include="StructBufferChunked.cs" />
+    <Compile Include="Fonts\SystemFont.cs" />
+    <Compile Include="Graphics\BitmapTool.cs" />
+    <Compile Include="Graphics\GraphicsExtensions.cs" />
+    <Compile Include="IO\FileVersion.cs" />
+    <Compile Include="Maths\Bounding\Circle.cs" />
+    <Compile Include="Maths\Geometries2D\Lines2d.cs" />
+    <Compile Include="Maths\Geometries2D\Utilities2d.cs" />
+    <Compile Include="Maths\Geometries\Triangle.cs" />
+    <Compile Include="Maths\Matrix.Inverse.cs" />
+    <Compile Include="Maths\Matrix.Algorithm.cs" />
+    <Compile Include="Maths\Geometries\Mesh\RawIndices.cs" />
+    <Compile Include="Maths\Geometries\Mesh\SubMesh.methods.cs" />
+    <Compile Include="Maths\Structs\VectorDouble2.cs" />
+    <Compile Include="Maths\Vector.cs" />
+    <Compile Include="StructBuffer.cs" />
+    <Compile Include="DArray.cs" />
+    <Compile Include="IO\Wavefront\WavefontReader.cs" />
+    <Compile Include="Maths\Geometries\Mesh\MeshGenerator.cs" />
+    <Compile Include="Maths\CameraHelp.cs" />
+    <Compile Include="Utilities\Camera\Camera.cs" />
+    <Compile Include="Utilities\Camera\TrackBallCamera.cs" />
+    <Compile Include="Utilities\Extensions\BinaryReaderExtensions.cs" />
+    <Compile Include="Utilities\Extensions\BinaryWriterExtensions.cs" />
+    <Compile Include="Utilities\Extensions\BitConverterExtensions.cs" />
+    <Compile Include="Utilities\Extensions\ControlExtensions.cs" />
+    <Compile Include="Utilities\Extensions\EndianBinaryReader.cs" />
+    <Compile Include="Utilities\Extensions\EndianBinaryWriter.cs" />
+    <Compile Include="Utilities\Extensions\IndexedProperty.cs" />
+    <Compile Include="Utilities\Extensions\ListExtensions.cs" />
+    <Compile Include="Utilities\Extensions\TypeExtension.cs" />
+    <Compile Include="Utilities\Extensions\XmlTextExtension.cs" />
+    <Compile Include="Inputs\MouseCursor.cs" />
+    <Compile Include="IO\IBinarySerializable.cs" />
+    <Compile Include="Maths\Geometries\Mesh\Mesh.cs" />
+    <Compile Include="Maths\Geometries\Mesh\TriMesh.methods.cs" />
+    <Compile Include="Maths\Geometries\Primitive.cs" />
+    <Compile Include="Maths\Numeric.cs" />
+    <Compile Include="Maths\Geometries\Mesh\SubMesh.cs" />
+    <Compile Include="Maths\Structs\RectangleUInt4.cs" />
+    <Compile Include="Utilities\Attributes.cs" />
+    <Compile Include="Utilities\MemoryHelp.cs" />
+    <Compile Include="DEPRECATED_TODELETE\FieldTool.cs" />
+    <Compile Include="MyDictionary.cs" />
+    <Compile Include="Utilities\Collections\PropertyIndexer.cs" />
+    <Compile Include="Debug.cs" />
+    <Compile Include="Disposable.cs" />
+    <Compile Include="Utilities\BufferList.cs" />
+    <Compile Include="Utilities\Collections\BitArray.cs" />
+    <Compile Include="Utilities\Collections\BitPartitioned.cs" />
+    <Compile Include="Utilities\Collections\CircularList.cs" />
+    <Compile Include="Utilities\Collections\CollectionManager.cs" />
+    <Compile Include="Utilities\Collections\MultiKeyDictionary.cs" />
+    <Compile Include="Utilities\Collections\Queue.cs" />
+    <Compile Include="Utilities\Collections\ArrayEnumerator.cs" />
+    <Compile Include="Utilities\Collections\Stack.cs" />
+    <Compile Include="Utilities\Collections\UniqueIDmanager.cs" />
+    <Compile Include="DisposableCollector.cs" />
+    <Compile Include="Fonts\FontBmText.cs" />
+    <Compile Include="Fonts\FontBmBinary.cs" />
+    <Compile Include="Fonts\FontBmXml.cs" />
+    <Compile Include="Fonts\FontDictionary.cs" />
+    <Compile Include="Fonts\FontIterator.cs" />
+    <Compile Include="Fonts\Glyph.cs" />
+    <Compile Include="Fonts\FontMudgeXml.cs" />
+    <Compile Include="Maths\UInt128.cs" />
+    <Compile Include="Maths\Structs\RectangleInt4.cs" />
+    <Compile Include="Maths\Structs\RectangleFloat4.cs" />
+    <Compile Include="Maths\Geometries2D\Polygon2d.cs" />
+    <Compile Include="Maths\Structs\Color4b.cs" />
+    <Compile Include="Maths\Structs\VectorInteger.cs" />
+    <Compile Include="Maths\Structs\VectorFloat2.cs" />
+    <Compile Include="Maths\Structs\VectorFloat3.cs" />
+    <Compile Include="Scene\ChildrenCollection.cs" />
+    <Compile Include="Scene\DepthFirstEnumerator.cs" />
+    <Compile Include="Scene\SceneNode.cs" />
+    <Compile Include="Scene\SceneTree.cs" />
+    <Compile Include="Inputs\UseHooks\KeyboardHook.cs" />
+    <Compile Include="Inputs\UseHooks\MouseHook.cs" />
+    <Compile Include="Inputs\UseHooks\WinHook.cs" />
+    <Compile Include="Inputs\Interfaces.cs" />
+    <Compile Include="Inputs\UseHooks\_KeyboardHook.cs" />
+    <Compile Include="Inputs\UseMessages\KeyboardMsg.cs" />
+    <Compile Include="Inputs\UseMessages\WindowMessagesFilter.cs" />
+    <Compile Include="Inputs\UseMessages\MouseMsg.cs" />
+    <Compile Include="Inputs\Enums.cs" />
+    <Compile Include="Inputs\EventHandlers.cs" />
+    <Compile Include="Inputs\KeyboardStates.cs" />
+    <Compile Include="Inputs\MouseState.cs" />
+    <Compile Include="Inputs\WindowKeysTool.cs" />
+    <Compile Include="Inputs\WindowMouse.cs" />
+    <Compile Include="Time\Time.cs" />
+    <Compile Include="Time\TimeHelper.cs" />
+    <Compile Include="Utilities\Tools\Diagnostics\CollectionDebugView.cs" />
+    <Compile Include="Maths\Bounding\Viewport.cs" />
+    <Compile Include="Utilities\SingletonString.cs" />
+    <Compile Include="Time\PreciseTimer.cs" />
+    <Compile Include="Time\MultiMediaTimer.cs" />
+    <Compile Include="Time\Timer.cs" />
+    <Compile Include="Utilities\Tools\Diagnostics\DebugListener.cs" />
+    <Compile Include="Utilities\NativeApi\WinApiMethods.cs" />
+    <Compile Include="Utilities\NativeApi\WinApiUtils.cs" />
+    <Compile Include="Utilities\CharHelp.cs" />
+    <Compile Include="Utilities\EnumHelp.cs" />
+    <Compile Include="IO\Wavefront\WaveException.cs" />
+    <Compile Include="IO\Wavefront\Wavefront.cs" />
+    <Compile Include="IO\Wavefront\WavefrontMat.cs" />
+    <Compile Include="IO\Wavefront\WaveGroup.cs" />
+    <Compile Include="IO\Wavefront\WavefrontObj.cs" />
+    <Compile Include="Graphics\DoubleBuffered.cs" />
+    <Compile Include="Utilities\Tools\Diagnostics\Graph\SerieCollectors.cs" />
+    <Compile Include="Utilities\FormUtils.cs" />
+    <Compile Include="Utilities\Tools\Diagnostics\Graph\PerformaceGraph.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Utilities\Tools\Diagnostics\Graph\Serie.cs" />
+    <Compile Include="Utilities\NativeApi\WinApiMessages.cs" />
+    <Compile Include="DEPRECATED_TODELETE\Geometry_old\2D\BaseGeometry2D.cs" />
+    <Compile Include="DEPRECATED_TODELETE\Geometry_old\2D\ConvexHull2D.cs" />
+    <Compile Include="DEPRECATED_TODELETE\Geometry_old\2D\Polygon.cs" />
+    <Compile Include="DEPRECATED_TODELETE\Geometry_old\2D\Triangles2D.cs" />
+    <Compile Include="DEPRECATED_TODELETE\Geometry_old\3D\BaseGeometry3D.cs" />
+    <Compile Include="DEPRECATED_TODELETE\Geometry_old\3D\ConvexHull3D.cs" />
+    <Compile Include="DEPRECATED_TODELETE\Geometry_old\3D\GeoSphere.cs" />
+    <Compile Include="DEPRECATED_TODELETE\Geometry_old\3D\HalfEdgeGeometry\DataStructure.cs" />
+    <Compile Include="DEPRECATED_TODELETE\Geometry_old\3D\Triangles3D.cs" />
+    <Compile Include="DEPRECATED_TODELETE\Geometry_old\Generic_Tools.cs" />
+    <Compile Include="DEPRECATED_TODELETE\GraphicStream.cs" />
+    <Compile Include="Maths\Bounding\AxisAlignedBoundingRect.cs" />
+    <Compile Include="Maths\Bounding\BoundingBox.cs" />
+    <Compile Include="Maths\Bounding\OBRect.cs" />
+    <Compile Include="Maths\Bounding\Sphere.cs" />
+    <Compile Include="Maths\Bounding\OBBox.cs" />
+    <Compile Include="Maths\Structs\VectorDouble3.cs" />
+    <Compile Include="Maths\Objects\Frustum.cs" />
+    <Compile Include="Maths\Objects\Frustum_old.cs" />
+    <Compile Include="Maths\Bounding\BoxUnit.cs" />
+    <Compile Include="Maths\Structs\HalfFloat.cs" />
+    <Compile Include="Maths\UInt24.cs" />
+    <Compile Include="Maths\Geometries\Intersections\FrustumIntersections.cs" />
+    <Compile Include="Maths\Structs\VectorShort.cs" />
+    <Compile Include="Maths\Geometries\Lines.cs" />
+    <Compile Include="Maths\Maths.cs" />
+    <Compile Include="Maths\Structs\Matrix3x3f.cs" />
+    <Compile Include="Maths\Structs\Matrix4x4f.cs" />
+    <Compile Include="Maths\Matrix.cs" />
+    <Compile Include="Maths\UnitVectorPacker.cs" />
+    <Compile Include="Maths\Geometries\Plane.cs" />
+    <Compile Include="Maths\Geometries\Intersections\PrimitiveIntersections.cs" />
+    <Compile Include="Maths\Structs\Quaternion.cs" />
+    <Compile Include="Maths\Structs\VectorFloat4.cs" />
+    <Compile Include="DEPRECATED_TODELETE\MemoryTool.cs" />
+    <Compile Include="Utilities\Poolable.cs" />
+    <Compile Include="Utilities\PoolClassManager.cs" />
+    <Compile Include="Utilities\Partitions\BVH\BvhBoxNode.cs" />
+    <Compile Include="Utilities\Partitions\BVH\Bvhnode.cs" />
+    <Compile Include="Utilities\Partitions\BVH\Bvhtree.cs" />
+    <Compile Include="Utilities\Partitions\INode.cs" />
+    <Compile Include="Utilities\Partitions\Octree\OctBoxNode.cs" />
+    <Compile Include="Utilities\Partitions\Octree\OctEnumerators.cs" />
+    <Compile Include="Utilities\Partitions\Octree\Octnode.cs" />
+    <Compile Include="Utilities\Partitions\Octree\OctOverlapEnumerators.cs" />
+    <Compile Include="Utilities\Partitions\Octree\Octree.cs" />
+    <Compile Include="Utilities\Partitions\Octree\OctTraverseEnumerators.cs" />
+    <Compile Include="Utilities\Partitions\Quadtree\NewFolder1\QuadEnums.cs" />
+    <Compile Include="Utilities\Partitions\Quadtree\NewFolder1\QuadNode.cs" />
+    <Compile Include="Utilities\Partitions\Quadtree\NewFolder1\QuadOverlap.cs" />
+    <Compile Include="Utilities\Partitions\Quadtree\QuadAdiacentEnumerators.cs" />
+    <Compile Include="Utilities\Partitions\Quadtree\QuadEnumerators.cs" />
+    <Compile Include="Utilities\Partitions\Quadtree\QuadNodes.cs" />
+    <Compile Include="Utilities\Partitions\Quadtree\QuadOverlapEnumerators.cs" />
+    <Compile Include="Utilities\Partitions\Quadtree\QuadTraverseEnumerators.cs" />
+    <Compile Include="Utilities\Partitions\Quadtree\Quadtree.cs" />
+    <Compile Include="Utilities\Partitions\TileCoord.cs" />
+    <Compile Include="Utilities\Partitions\Voxel2D\VoxelConstants.cs" />
+    <Compile Include="Utilities\Partitions\Voxel2D\VoxelNode2d.cs" />
+    <Compile Include="Utilities\Partitions\Voxel2D\VoxelTree2d.cs" />
+    <Compile Include="Utilities\Partitions\Voxel\VoxelConstants.cs" />
+    <Compile Include="Utilities\Partitions\Voxel\VoxelOctree.cs" />
+    <Compile Include="Physics\Body.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\Tools\Camera.cs" />
+    <Compile Include="Utilities\Tools\Diagnostics\CpuUsage.cs" />
+    <Compile Include="Utilities\Tools\ImageTools.cs" />
+    <Compile Include="DEPRECATED_TODELETE\Camera.cs" />
+    <Compile Include="Utilities\Tools\Singleton.cs" />
+    <Compile Include="Utilities\Tools\TerrainTool.cs" />
+    <Compile Include="Graphics\BitmapLock.cs" />
+    <Compile Include="IO\Wavefront\WaveObject.cs" />
+    <Compile Include="IO\Wavefront\WaveMaterial.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DEPRECATED_TODELETE\Geometry_old\HalfEdgeStructure.doc" />
+    <None Include="Maths\Geometries\Intersections\Intersections.doc" />
+    <None Include="Maths\Geometries\Intersections\Intersections.pdf" />
+    <None Include="Maths\Geometries\Intersections\Plane_Cylinder intersection.pdf" />
+    <None Include="Resources\EmpyrionTree.bt" />
+    <None Include="Resources\include_common.bt" />
+    <None Include="Resources\include_mesh.bt" />
+    <None Include="Resources\include_scenetree.bt" />
+    <None Include="Resources\Mesh.bt" />
+    <None Include="Resources\SceneTree.bt" />
+    <None Include="Resources\Tiff.bt" />
+    <None Include="Utilities\Partitions\Octree\Octree.doc" />
+    <None Include="Utilities\Partitions\Quadtree\quad.xls" />
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Utilities\Tools\Diagnostics\Graph\PerformaceGraph.resx">
+      <DependentUpon>PerformaceGraph.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Inputs\README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SharpZipLib.NETStandard">
+      <Version>1.0.7</Version>
+    </PackageReference>
+    <PackageReference Include="System.Memory">
+      <Version>4.5.5</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,119 @@
+#define COMMON_BT
+
+
+local int i=0;
+local int j=0;
+
+
+
+//7bit encoded
+typedef struct
+{
+    local int length = 0;
+    local int shift = 0;
+    do
+    {
+        if (shift == 35) 
+        {
+            Warning("Corrupted 7bit string");
+            return -1;
+        }
+        unsigned byte b <hidden=false>;
+        length |= (b & 0x7F) << shift;
+        shift += 7;
+    }
+    while((b & 0x80) != 0);
+
+    if (length > 0) char str[length] <optimize=false>;
+
+}
+STRING <optimize=false, read=STRINGRead>; 
+
+
+string STRINGRead(STRING &s)
+{
+    string str;
+    SPrintf(str, "%s ", s.str);
+    return str;
+}
+
+typedef struct {
+    ushort x;
+    ushort y;
+    ushort z;
+} USHORT3;
+
+typedef struct {
+    ushort x;
+    ushort y;
+} USHORT2;
+
+typedef struct {
+    float x;
+    float y;
+    float z;
+    float w;
+} FLOAT4;
+
+typedef struct {
+    float x;
+    float y;
+    float z;
+} FLOAT3;
+
+
+typedef struct {
+    float x;
+    float y;
+} FLOAT2;
+
+
+typedef struct {
+    int x;
+    int y;
+    int z;
+} INT3;
+
+typedef struct {
+    byte b0 <hidden=true>;
+    byte b1 <hidden=true>;
+    byte b2 <hidden=true>;
+} INT24;
+
+
+typedef struct {
+    float m[16];
+} MATRIX;
+
+
+typedef struct {
+    FLOAT3 pos;
+    FLOAT4 rot;
+    FLOAT3 scale;
+} MATRIX_STR;
+
+
+typedef struct {
+    byte r;
+    byte g;
+    byte b;
+    byte a;
+} COLOR;
+
+typedef struct {
+    ubyte r;
+    ubyte g;
+    ubyte b;
+} COLOR_NOALPHA<read=COLOR_NOALPHARead>;
+
+string COLOR_NOALPHARead(COLOR_NOALPHA &c)
+{
+    string str;
+    SPrintf(str, "%i %i %i", c.r, c.g, c.b);
+    return str;
+}
+
+
+LittleEndian();
+Printf ("define globals\n");
+SetBackColor(cNone);

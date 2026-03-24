@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9FD57A12-2105-4A9B-8BDC-C2ED1D5EEC28}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Common.Gui</RootNamespace>
+    <AssemblyName>Common.Gui</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Elements\GuiElement.cs" />
+    <Compile Include="Elements\GuiText.cs" />
+    <Compile Include="Elements\GuiImage.cs" />
+    <Compile Include="Elements\GuiRectangle.cs" />
+    <Compile Include="Graphics\GraphicsExtension.cs" />
+    <Compile Include="Graphics\ImageAtlas.cs" />
+    <Compile Include="GUI\DrawDepthOrdered.cs" />
+    <Compile Include="GUI\GuiButtonsList.cs" />
+    <Compile Include="GUI\GuiContainer.cs" />
+    <Compile Include="GUI\GuiControl.draw.cs" />
+    <Compile Include="GUI\GuiElementManager.cs" />
+    <Compile Include="GUI\GuiResource.cs" />
+    <Compile Include="GUI\GuiRoot.cs" />
+    <Compile Include="GUI\GuiComboBox.cs" />
+    <Compile Include="GUI\GuiEditText.cs" />
+    <Compile Include="Graphics\MyGuiShapeStyle.cs" />
+    <Compile Include="GUI\GuiScrollBar.cs" />
+    <Compile Include="GUI\Gui.cs" />
+    <Compile Include="GUI\GuiButton.cs" />
+    <Compile Include="GUI\GuiControl.cs" />
+    <Compile Include="GUI\GuiControl.events.cs" />
+    <Compile Include="GUI\GuiControl.methods.cs" />
+    <Compile Include="Graphics\ImageAtlasLayout.cs" />
+    <Compile Include="GUI\GuiManager.cs" />
+    <Compile Include="GUI\GuiPanel.cs" />
+    <Compile Include="GUI\GuiCheckBox.cs" />
+    <Compile Include="GUI\GuiRenderer.cs" />
+    <Compile Include="GUI\TreeTraversal.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Graphics\GraphicRenderer.cs" />
+    <Compile Include="SystemGraphic\SysGuiImage.cs" />
+    <Compile Include="SystemGraphic\SysGuiText.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Graphics\gui.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Graphics\gui.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common.csproj">
+      <Project>{7e655b04-5914-4f26-9947-81c20b41f049}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

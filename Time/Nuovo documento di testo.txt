@@ -1,0 +1,330 @@
+ using System;
+ using System.Collections.Generic;
+ using System.Text;
+ using System.Threading;
+ 
+ using Engine.Maths;
+ 
+ namespace Engine.Tools
+ { 
+   /// <summary>
+   /// http://gafferongames.com/game-physics/fix-your-timestep/
+   /// </summary>
+   public enum TimeStepMode
+   {
+       /// <summary>
+       /// Match with loop cicle, the elapsed time depend only by time used by CPU to run callback function.
+       /// It have a very intensive CPU usage, example for an empty function you can reach 1000 FPS.
+       /// Can be used example for a performance test.
+       /// The sleeping 1ms are removed, so CPU will be use to maximum, use it for a diagnostic gameloop.
+       /// My desktop pc, other 25% cpu usage generate a hiss, so i need to set always a sleeping delay of 1ms
+       /// </summary>
+       Brutal = 0,
+       /// <summary>
+       /// Used for render frame loop, simply it don't run the callback if not enough time has elapsed,
+       /// next frame the counter is reseted. I notive that using a time sleep 1ms maximum fps is 64.
+       /// </summary>
+       LimitFrameRate = 1,
+       /// <summary>
+       /// Used for deterministic physic loop, for every loop cicle the callback is called many time to ensure
+       /// that each steps use a deltatime less or equal than setting time.
+       /// </summary>
+       SemiFixedTimestep = 2,
+       /// <summary>
+       /// If physic loop may take too long, is possible that it slow all other callbacks. To slow only this function
+       /// a greater timestep is returned. This generate less physic loops but with a greater dt.
+       /// </summary>
+       VariableTimestep = 3
+   }
+ 
+   /// <summary>
+   /// Game loop performance test, use some delay milliseconds to test how gameloop behaves 
+   /// </summary>
+   [Flags]
+   public enum GameLoopFakeFlags
+   {
+       None = 0,
+       Constant = 1,
+       Noise = 2,
+   }
+ 
+ 
+   public delegate void GameLoopFuncDelegate(double elapsedMS, GameLoopFunc info);
+ 
+   /// <summary>
+   /// Classic brutal force loop, no delay, no trigger time
+   /// </summary>
+   public class GameLoopFunc
+   {
+       static void VoidFunction(double elapsedMS, GameLoopFunc function)
+       {
+ 
+       }
+ 
+ 
+       IGameLoop gameloop;
+       TimeStepMode mode;
+       PreciseTimer timer;
+ 
+       /// <summary>
+       /// The relative action to do when tiggered
+       /// </summary>
+       protected GameLoopFuncDelegate callback;
+ 
+       // for test i use a fake time consuption of callback function
+       protected int fakeDelayMs = 0;
+       protected GameLoopFakeFlags fakeDelayFlag;       
+       /// <summary>
+       /// Trigger time in MS
+       /// </summary>
+       internal readonly double dt;
+       /// <summary>
+       /// Accumulated free time in MS
+       /// </summary>
+       internal double accumulated;
+       /// <summary>
+       /// Previous callback time comsuption
+       /// </summary>
+       internal double duration;    
+       /// <summary>
+       /// Number of calls for one game loop cicle (how many time is called before go to next callback function ?)
+       /// </summary>
+       internal int callspercicle;
+       /// <summary>
+       /// Number of calls for one second.
+       /// </summary>
+       internal float callspersecond;
+ 
+ 
+       /// <summary>
+       /// </summary>
+       public GameLoopFunc(IGameLoop gameloop, GameLoopFuncDelegate action, double triggertime,
+           GameLoopFakeFlags fakeDelayFlag = GameLoopFakeFlags.None,
+           int fakeDelayMs = 0)
+       {
+           this.callback = action != null ? action : VoidFunction;
+           this.dt = triggertime;
+           this.gameloop = gameloop;
+           this.fakeDelayFlag = fakeDelayFlag;
+           this.fakeDelayMs = fakeDelayMs;
+           this.Timer = MainLoop.timer;
+       }
+ 
+       public readonly ITimer Timer;
+       /// <summary>
+       /// Diagnostic value, number of function calls for each seconds.
+       /// Is equal to FPS in a render callback
+       /// </summary>
+       public float CallsPerSecond { get; internal set; }
+       /// <summary>
+       /// Time in millisecond used by this function previosly.
+       /// </summary>
+       public float PrevDurationMS
+       {
+           get { return (float)duration; }
+       }
+       /// <summary>
+       /// Number of call for cicle, always 1 for a RenderFrame, &gt1 for a PhysicLoop. 
+       /// It return how many time related callback is called before cicle call next callback function.
+       /// </summary>
+       /// </summary>
+       public int CallsPerCicle
+       {
+           get { return callspercicle; }
+       }
+       /// <summary>
+       /// After some defined time, update statistics, example after 1 second
+       /// </summary>
+       public void UpdateStats(double seconds)
+       {
+           if (callspersecond > 0)
+           {
+               CallsPerSecond = (float)(callspersecond / seconds);
+               callspersecond = 0;
+           }
+       }
+ 
+       /// <summary>
+       /// Check if this elapsed cicle's time tiggers the callback function
+       /// </summary>
+       public virtual void Update(double elapsedMS)
+       {
+           accumulated += elapsedMS;
+           
+ 
+           double t0 = MainLoop.timer.MilliSecondsAccumulated;
+           callback(elapsedMS, this);
+           DoCallbackFakeDelay();
+ 
+           callspersecond++;
+           callspersecond = 1;
+ 
+           duration = MainLoop.timer.MilliSecondsAccumulated - t0;
+           
+       }
+       /// <summary>
+       /// Debug purpose
+       /// </summary>
+       protected void DoCallbackFakeDelay()
+       {
+           if (fakeDelayFlag == GameLoopFakeFlags.Constant)
+           {
+               Thread.SpinWait(100000 * fakeDelayMs);
+               //Thread.Sleep(fakeDelayMs);
+           }
+           else if (fakeDelayFlag == GameLoopFakeFlags.Noise)
+           {
+               Thread.SpinWait(100000 * MathUtils.GetRandomInt(0, fakeDelayMs));
+               //Thread.Sleep(MathUtils.GetRandomInt(0, fakeDelayMs));
+           }
+       }
+ 
+       public override string ToString()
+       {
+           return base.ToString();
+       }
+   }        
+ }
+ 
+ // private namespace
+ namespace Engine.Tools.Time
+ {
+   /// <summary>
+   /// Simplest callback function, it triggers only if the elapsed time is greater than that settled
+   /// </summary>
+   public class LimitFrameRateFunc : GameLoopFunc
+   {
+       public LimitFrameRateFunc(GameLoopCustom gameloop, GameLoopFuncDelegate callback, double triggertimeMS,
+           GameLoopFakeFlags fakeDelay = GameLoopFakeFlags.None, int fakeDelayMS = 0)
+           : base(gameloop, callback, triggertimeMS, fakeDelay,fakeDelayMS)
+       {
+ 
+       }
+ 
+       public override void Update(double elapsedMS)
+       {
+           accumulated += elapsedMS;
+ 
+           if (accumulated > dt)
+           {
+               if (accumulated > dt * 10) accumulated = dt * 10;
+ 
+               //Console.WriteLine(string.Format("elapsedMS {0} accumulate {1}", elapsedMS, accumulate));
+               double t0 = MainLoop.timer.MilliSecondsAccumulated;
+               callback(0.0, this);
+               DoCallbackFakeDelay();
+               duration = MainLoop.timer.MilliSecondsAccumulated - t0;
+ 
+               callspersecond++;
+               callspercicle = 1;
+ 
+               // can't set accumulate=0, example if a cicle use 15ms and you set a dt 16ms
+               // need two cicle to do 30>16, and if then you reset accumulate, you will 
+               // need always 2 cicle. Need to keep some previuos time
+               accumulated -= dt;
+               //accumulate = accumulate % dt;
+ 
+               //Console.WriteLine(duration);
+           }
+       }
+ 
+       public override string ToString()
+       {
+           return base.ToString();
+       }
+   }
+ 
+   /// <summary>
+   /// Ensure that each call of function return a fixed dt. If this function slow a lot, the result is 
+   /// a slow FPS and always 10 calls per cicle
+   /// </summary>
+   public class SemiFixedTimestepFunc : GameLoopFunc
+   {
+       public SemiFixedTimestepFunc(GameLoopCustom gameloop, GameLoopFuncDelegate callback, double triggertimeMS,
+           GameLoopFakeFlags fakeDelay = GameLoopFakeFlags.None, int fakeDelayMS = 0)
+           : base(gameloop, callback, triggertimeMS,fakeDelay, fakeDelayMS)
+       {
+       }
+ 
+       public override void Update(double elapsedMS)
+       {
+           accumulated += elapsedMS;
+ 
+           double t0;
+           if (accumulated > dt)
+           {
+               t0 = MainLoop.timer.MilliSecondsAccumulated;
+ 
+               // fix "spiral-of-death" with a limit of maximum 10 updates per cicle
+               if (accumulated > dt * 10) accumulated = dt * 10;
+               callspercicle = (int)(accumulated / dt);
+ 
+               for (int step = 0; step < callspercicle; step++)
+               {
+                   callback(dt, this);
+                   DoCallbackFakeDelay();
+                   callspersecond++;
+                   accumulated -= dt;
+               }
+               // notice that at the end of updates accumulate != 0, some fragment of time will be used for next cicle
+               duration = (MainLoop.timer.MilliSecondsAccumulated - t0) / callspercicle;
+           }
+       }
+   }
+ 
+   /// <summary>
+   /// TO DO :  why resizing the dt increase ???
+   /// 
+   /// Ensure maximum 4 calls per cicle. If function require more time so more calls, the delta time will be
+   /// reduced. The effect is a faster FPS but physic use less precision
+   /// </summary>
+   public class VariableTimestepFunc : GameLoopFunc
+   {
+       /// <summary>
+       /// maximum number of steps to do before call next callback function.
+       /// This value don't affect directly the Updates Per Seconds, the optimal value is 1
+       /// in order that next callbacks can be evaluated and tiggered if necessary
+       /// </summary>
+       const int MAXCOUNTPERCICLE = 1;
+ 
+       public VariableTimestepFunc(GameLoopCustom gameloop, GameLoopFuncDelegate callback, double triggertimeMS,
+           GameLoopFakeFlags fakeDelay = GameLoopFakeFlags.None, int fakeDelayMS = 0)
+           : base(gameloop, callback, triggertimeMS,fakeDelay, fakeDelayMS)
+       {
+       }
+ 
+       public override void Update(double elapsedMS)
+       {
+           accumulated += elapsedMS;
+ 
+           // measure the time used to run this callback
+           double t0, t1;      
+           double dt_modified = dt;
+ 
+           if (accumulated > dt)
+           {
+               t0 = MainLoop.timer.MilliSecondsAccumulated;
+ 
+               // fix "spiral-of-death" with a limit of maximum 10 updates per cicle
+               if (accumulated > dt * 10) accumulated = dt * 10;
+               callspercicle = (int)(accumulated / dt);
+ 
+               if (callspercicle > MAXCOUNTPERCICLE)
+               {
+                   dt_modified = accumulated / MAXCOUNTPERCICLE;
+                   callspercicle = MAXCOUNTPERCICLE;
+               }
+ 
+               for (int step = 0; step < callspercicle; step++)
+               {
+                   callback(dt_modified, this);
+                   DoCallbackFakeDelay();
+                   callspersecond++;
+                   accumulated -= dt_modified;
+               }
+               duration = (MainLoop.timer.MilliSecondsAccumulated - t0) / callspercicle;
+           }
+       }
+   }
+ 
+ }

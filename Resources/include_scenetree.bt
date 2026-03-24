@@ -1,0 +1,60 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: johnwhile
+//   Version: 
+//   Purpose: 
+//  Category:
+// File Mask: 
+//  ID Bytes: 
+//   History: Custom SceneTree data 
+//------------------------------------------------
+
+#define SCENETREE_BT
+
+#ifndef MESH_BT
+    #include "include_mesh.bt"
+#endif
+
+
+typedef enum <byte> {
+    kIdentity = 0,
+    kFloat16 = 1,
+    kDecomposed = 2
+}
+TRANSFORMVERSION;
+
+
+struct SCENENODE;
+
+typedef struct 
+{
+    STRING name;
+    int element_index;
+    
+    TRANSFORMVERSION matrix_ver;
+    switch(matrix_ver)
+    {
+        case kFloat16    : MATRIX transform; break;
+        case kDecomposed : MATRIX_STR transform; break;
+    }
+    int children_count;
+    if (children_count>0) SCENENODE child[children_count];
+}
+SCENENODE <optimize=false>;
+
+
+typedef struct 
+{
+    local int64 begin = FTell();
+    int64 signature;
+    int64 filesize;
+    STRING name;
+
+    SCENENODE Root;
+    int element_count;
+    local int64 end = FTell();
+    if (filesize != (end - begin)) return -1;
+}
+SCENETREE <optimize=false>;

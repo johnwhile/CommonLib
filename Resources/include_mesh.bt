@@ -1,0 +1,191 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: johnwhile
+//   Version: 
+//   Purpose: 
+//  Category:
+// File Mask: 
+//  ID Bytes: 
+//   History: Custom Mesh data 
+//------------------------------------------------
+#define MESH_BT
+
+#ifndef COMMON_BT
+    #include "include_common.bt"
+#endif
+
+
+typedef enum <byte> {
+    kNone = 0,
+    kHalfFloatV = 1
+}
+COMPRESSION_V;
+
+typedef enum <byte> {
+    kMatrixTRS = 1
+}
+COMPRESSION_M;
+
+typedef enum <byte> {
+    kEncoded7Bit = 1
+}
+COMPRESSION_I;
+
+typedef enum <byte> {
+    kNormals16 = 1,
+    kNormals24 = 2,
+    kNormalsX15Y15Z1 = 3
+}
+COMPRESSION_N;
+
+typedef enum <byte> {
+    kHalfFloatT = 1
+}
+COMPRESSION_T;
+
+typedef enum <byte> {
+    kNoAlpha = 1
+}
+COMPRESSION_C;
+
+
+
+typedef enum <byte> {
+    kUndefined = 0,
+    kPointList = 1,
+    kLineList = 2,
+    kLineStrip = 3,
+    kTriangleList = 4,
+    KTriangleStrip = 5,
+}
+PRIMITIVE;
+
+
+
+typedef struct 
+{
+    STRING name;
+
+    int count;
+    int offset;
+    byte format;
+    
+    switch (format)
+    {
+        case 8:  byte   indices[count]; break;
+        case 16: ushort indices[count]; break;
+        case 32: byte   use7BitEncoder;
+                 uint   indices[count]; break;
+    }
+}
+SUBMESH <optimize=false>;
+
+typedef struct 
+{
+    local long begin = FTell();
+
+    int64 signature;
+    int64 filesize;
+    uint  version;
+    STRING name;
+    PRIMITIVE topology;
+    uint  diffuse;
+
+    ///////////////////////////////////////////////////////
+    byte hasmatrix;
+    if (hasmatrix)
+    {
+        COMPRESSION_M compress_m;
+        if (compress_m & kMatrixTRS != 0) MATRIX_STR transform;
+        else MATRIX transform;
+    }
+
+    ///////////////////////////////////////////////////////
+    int submeshcount;
+    if (submeshcount>0)
+    {
+        SUBMESH submeshes[submeshcount];
+    }
+
+
+    ///////////////////////////////////////////////////////
+    int vertexcount;
+    if (vertexcount>0)
+    {
+        COMPRESSION_V compress_v;
+        if ((compress_v & kHalfFloatV) !=0) 
+        {
+            FLOAT3 min;
+            FLOAT3 max;
+            USHORT3 vertices[vertexcount];
+        }
+        else FLOAT3 vertices[vertexcount];
+    }
+    ///////////////////////////////////////////////////////
+    int texcoordcount;
+    if (texcoordcount>0)
+    {
+        COMPRESSION_T compress_t;
+        
+        if ((compress_t & kHalfFloatT) !=0)
+        {
+            FLOAT2 min;
+            FLOAT2 max;
+            USHORT2 texcoords[texcoordcount];
+        }
+        else FLOAT2 texcoords[texcoordcount];
+    }
+    ///////////////////////////////////////////////////////
+    int normalcount;
+    if (normalcount>0)
+    {
+        COMPRESSION_N compress_n;
+
+        switch(compress_n)
+        {
+            case kNormals16: ushort normals[normalcount]; break;
+            case kNormals24: INT24 normals[normalcount]; break;
+            case kNormalsX15Y15Z1: uint normals[normalcount]; break;
+            default: FLOAT3 normals[normalcount]; break;
+        }
+    }
+    ///////////////////////////////////////////////////////
+    int colorcount;
+    if (colorcount>0)
+    {
+        COMPRESSION_C compress_c;
+        
+        if ((compress_c & kNoAlpha) !=0)
+            COLOR_NOALPHA colors[colorcount];
+        else 
+            COLOR colors[colorcount];
+        
+    }
+    ///////////////////////////////////////////////////////
+    int tangentcount;
+    if (tangentcount>0)
+    {
+        FLOAT4 tangents[tangentcount];
+    }
+
+    ///////////////////////////////////////////////////////
+    int boneidcount;
+    if (boneidcount>0)
+    {
+        UINT boneid[boneidcount];
+    }
+    int boneweightcount;
+    if (boneweightcount>0)
+    {
+        FLOAT4 boneweight[boneweightcount];
+    }
+
+    local long end = FTell();
+    
+    if (filesize != (end-begin))
+        Warning("filesize wrong");
+
+}
+MESH <optimize=false>;

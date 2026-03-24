@@ -1,0 +1,21 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: johnwhile
+//   Version: 
+//   Purpose: 
+//  Category:
+// File Mask: 
+//  ID Bytes: 
+//   History: Custom SceneTree data 
+//------------------------------------------------
+
+#ifndef SCENETREE_BT
+    #include "include_scenetree.bt"
+#endif
+
+LittleEndian();
+FSeek(0);
+SCENETREE tree;
+SetBackColor(cNone);

@@ -1,0 +1,21 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: johnwhile
+//   Version: 
+//   Purpose: 
+//  Category:
+// File Mask: 
+//  ID Bytes: 
+//   History: Custom Mesh data 
+//------------------------------------------------
+
+#ifndef MESH_BT
+    #include "include_mesh.bt"
+#endif
+
+LittleEndian();
+FSeek(0);
+MESH mesh;
+SetBackColor(cNone);
