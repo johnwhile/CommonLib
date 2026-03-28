@@ -22,9 +22,8 @@ namespace Common.Maths
         /// <summary>
         /// The signature of Mesh class. Derive class must implement own signature overriding <see cref="Signature"/> property.
         /// </summary>
-        public readonly static new long BaseSignature = BitConverterExt.ToInt64("TRIMESH");
-        public override long Signature => BaseSignature;
-
+        public readonly static long TriMeshSignature = BitConverterExt.ToInt64("TRIMESH");
+        
 
         public TriMesh(Primitive topology = Primitive.TriangleList, string name = "my_mesh") : base(topology, name) 
         {
@@ -135,15 +134,81 @@ namespace Common.Maths
         }
 
 
+        [Flags]
+        enum Old_Compression : ushort
+        {
+            None = 0,
+            MatrixTRS = 1,
+            PackedVertices = 2,
+            PackedNormals16 = 4,
+            PackedNormals24 = 8,
+            PackedNormals32 = 16, // 0x0010
+            PackedNormalsMask = PackedNormals32 | PackedNormals24 | PackedNormals16, // 0x001C
+            PackedTexCoords = 32, // 0x0020
+            ColorNoAlpha = 64, // 0x0040
+            PackedTangents = 128, // 0x0080
+        }
+
+        [Obsolete]
+        public bool ReadOldVersion(BinaryReader reader)
+        {
+            long position = reader.BaseStream.Position;
+            long signature = reader.ReadInt64();
+            long filesize = reader.ReadInt64();
+           
+            if (MeshSignature != signature && TriMeshSignature != signature)
+                throw new Exception($"signature not match for class {GetType()}");
+            
+            Name = reader.ReadString();
+            Topology = (Primitive)reader.ReadByte();
+
+  
+            Old_Compression compression = (Old_Compression)reader.ReadUInt16();
+
+            Transform = Matrix4x4f.Identity;
+
+            if (reader.ReadBoolean())
+                Transform = compression.HasFlag(Old_Compression.MatrixTRS) ? 
+                    Matrix4x4f.ComposeTRS(new Vector3f(reader), (Quaternion4f)new Vector4f(reader), new Vector3f(reader)) : new Matrix4x4f(reader);
+
+            
+            Vertices = new StructBuffer<Vector3f>(reader.ReadUnsafe<Vector3f>(reader.ReadInt32()));
+            TexCoords = new StructBuffer<Vector2f>(reader.ReadUnsafe<Vector2f>(reader.ReadInt32()));
+
+
+            if (compression.HasFlag(Old_Compression.PackedNormals24))
+            {
+                int count = reader.ReadInt32();
+                Normals = new StructBuffer<Vector3f>(count);
+                for (int i = 0; i < count; i++) Normals.Add(UnitSphericalPacker24.Decode(reader.ReadUInt24()));
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            Colors = new StructBuffer<Color4b>(reader.ReadUnsafe<Color4b>(reader.ReadInt32()));
+
+            Tangents = new StructBuffer<Vector4f>(reader.ReadUnsafe<Vector4f>(reader.ReadInt32()));
+
+            //indices
+            if (!ReadSubMeshes(reader)) return false;
+
+            long num2 = reader.BaseStream.Position - position;
+            return true;
+        }
+
         public virtual bool Read(BinaryReader reader)
         {
             //header
             long begin = reader.BaseStream.Position;
             var signature = reader.ReadInt64();
             var bytesize = reader.ReadInt64();
-            if (Signature != signature) throw new Exception($"signature not match for class {GetType()}");
+            
+            if (TriMeshSignature != signature && MeshSignature != signature)
+                throw new Exception($"signature not match for class {GetType()}");
+            
             Version = new FileVersion(reader);
-
             Name = reader.ReadString();
             Topology = (Primitive)reader.ReadByte();
             Diffuse = reader.ReadColor4b();
@@ -191,7 +256,7 @@ namespace Common.Maths
             CompressionColor compression_c = 0)
         {
             long begin = writer.BaseStream.Position;
-            writer.WriteLong(BaseSignature);
+            writer.WriteLong(TriMeshSignature);
             writer.WriteLong(0); //filesize
             Version.Write(writer);
             writer.Write(Name);

@@ -2,10 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using System.Xml;
 using System.Diagnostics;
 
-using Common.IO;
 
 namespace Common.Maths
 {
@@ -16,13 +14,10 @@ namespace Common.Maths
     public abstract partial class Mesh
     {
         /// <summary>
-        /// The signature of Mesh class. Derive class must implement own signature overriding <see cref="Signature"/> property.
-        /// </summary>
-        public readonly static long BaseSignature = BitConverterExt.ToInt64("MESH");
-        /// <summary>
         /// The signature define the class type, must be unique and it's used to stop reading if something wrong
         /// </summary>
-        public virtual long Signature => BaseSignature;
+        public readonly static long MeshSignature = BitConverterExt.ToInt64("MESH");
+
         /// <summary>
         /// Name of object
         /// </summary>
