@@ -81,8 +81,8 @@ namespace Common.IO.Wavefront
         /// </summary>
         public override bool Save(string filename)
         {
-            string fixedname = Path.GetFileNameWithoutExtension(filename).Replace(' ', '_');
-            filename = Path.Combine(Path.GetDirectoryName(filename), fixedname + Extension);
+            string fix = Path.GetFileNameWithoutExtension(filename).Replace(' ', '_');
+            filename = Path.Combine(Path.GetDirectoryName(filename), fix + Extension);
             return base.Save(filename);
         }
 

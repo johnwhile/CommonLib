@@ -354,6 +354,7 @@ namespace Common.Maths
             BitArray1 utilsMap = BitArray1.Create(submesh.Indices, offset, max - offset + 1);
             int vertsCount = utilsMap.GetCount1;
 
+
             //build new vertices list with only index found in indices list
             new_mesh.Vertices = new StructBuffer<Vector3f>(vertsCount);
 
@@ -364,15 +365,17 @@ namespace Common.Maths
             }
 
             //make a shallow copy of entire class
-            SubMesh new_submesh = MemberwiseClone() as SubMesh;
+            //SubMesh new_submesh = MemberwiseClone() as SubMesh;
+
+            SubMesh new_submesh = new_mesh.AddSubMesh(submesh);
 
             //remap indices list
             int[] subtractor = new int[max - offset + 1];
             int idx = 0;
             int subtract = 0;
-            foreach (bool set in utilsMap.BooleanList)
+            foreach (bool val in utilsMap.BooleanList)
             {
-                if (!set) subtract++;
+                if (!val) subtract++;
                 else subtractor[idx] = subtract;
                 idx++;
             }
@@ -383,9 +386,9 @@ namespace Common.Maths
             }
 
             //assign manualy the new references
-            new_mesh.SubMeshes = new List<SubMesh>(1);
-            new_submesh.mesh = new_mesh;
-            new_mesh.SubMeshes.Add(new_submesh);
+            //new_mesh.SubMeshes = new List<SubMesh>(1);
+            //new_submesh.mesh = new_mesh;
+            //new_mesh.SubMeshes.Add(new_submesh);
 
             return new_mesh;
         }
