@@ -1,9 +1,8 @@
-﻿using System;
+﻿
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace Common.Maths
 {
@@ -21,6 +20,8 @@ namespace Common.Maths
     /// </summary>
     public class RawIndices : IEnumerable<int>
     {
+        public object owner;
+
         IndexFormat m_format = IndexFormat.None;
         StructBuffer<byte> m_buffer;
 

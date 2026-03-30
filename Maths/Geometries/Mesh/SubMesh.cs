@@ -63,6 +63,7 @@ namespace Common.Maths
         internal SubMesh(Mesh mesh, int indexCapacity = 0, IndexFormat format = IndexFormat.Index32bit , string name = "my_submesh") : this(mesh)
         {
             Indices = new RawIndices(format, indexCapacity);
+            Indices.owner = this;
             Name = name;
         }
 
@@ -83,6 +84,7 @@ namespace Common.Maths
         {
             Name = reader.ReadString();
             Indices = RawIndices.Read(reader, out FirstVertex);
+            Indices.owner = this;
             return true;
         }
 
