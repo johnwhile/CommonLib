@@ -52,17 +52,22 @@ namespace Common.Maths
             get => m_format;
             private set
             {
+                //Resize entire array
                 if (m_format < value)
                 {
-                    int[] tmp = new int[Count];
-                    for (int i = 0; i < Count; i++) tmp[i] = Getter(i);
+                    //Count are calculated with m_format value
+                    int tmp_Count = Count;
+
+                    int[] tmp = new int[tmp_Count];
+                    for (int i = 0; i < tmp_Count; i++) tmp[i] = Getter(i);
+
                     switch (value)
                     {
                         case IndexFormat.Index8bit: Getter = Get8; Setter = Set8; break;
                         case IndexFormat.Index16bit: Getter = Get16; Setter = Set16; break;
                         case IndexFormat.Index32bit: Getter = Get32; Setter = Set32; break;
                     }
-                    for (int i = 0; i < Count; i++) Setter(tmp[i], i);
+                    for (int i = 0; i < tmp_Count; i++) Setter(tmp[i], i);
                 }
                 m_format = value;
             }
