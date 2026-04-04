@@ -34,6 +34,13 @@ namespace Common.Maths
         /// </summary>
         NormalsX15Y15Z1 = 3
     }
+    public enum CompressionTangents : byte
+    {
+        None = 0,
+        Normals16_WeightInt16 = 1,
+        Normals24_WeightInt16 = 2
+    }
+
     public enum CompressionTexCoord : byte
     {
         None = 0,

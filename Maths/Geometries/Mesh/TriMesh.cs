@@ -7,17 +7,18 @@ using Common.IO;
 
 namespace Common.Maths
 {
-
     /// <summary>
     /// 3D triangle implementation
     /// </summary>
     public partial class TriMesh : Mesh, IBinarySerializable, IXmlSerializable
     {
-        CompressionTransform compression_m;
-        CompressionIndices compression_i;
-        CompressionVertices compression_v;
-        CompressionNormals compression_n;
-        CompressionTexCoord compression_t;
+        public CompressionTransform PreferedTransformComp;
+        public CompressionIndices PreferedIndicesComp;
+        public CompressionVertices PreferedVertsComp;
+        public CompressionNormals PreferedNormsComp;
+        public CompressionTexCoord PreferedTexCoordComp;
+        public CompressionTangents PreferedTangentsComp;
+
 
         /// <summary>
         /// The signature of Mesh class. Derive class must implement own signature overriding <see cref="Signature"/> property.
@@ -53,15 +54,13 @@ namespace Common.Maths
         public StructBuffer<Vector4b> BoneIds;
         public StructBuffer<Vector4b> BoneWeights;
 
-
         public int VerticesCount => Vertices?.Count ?? 0;
         public bool HasNormals => Normals?.Count > 0;
         public bool HasTexCoords => TexCoords?.Count > 0;
         public bool HasColors => Colors?.Count > 0;
         public bool HasTangents => Tangents?.Count > 0;
         public bool HasSkins => BoneIds?.Count > 0 && BoneWeights?.Count > 0;
-        
-        
+
         /// <summary>
         /// Calculate the vertices bound
         /// </summary>
@@ -134,70 +133,6 @@ namespace Common.Maths
         }
 
 
-        [Flags]
-        enum Old_Compression : ushort
-        {
-            None = 0,
-            MatrixTRS = 1,
-            PackedVertices = 2,
-            PackedNormals16 = 4,
-            PackedNormals24 = 8,
-            PackedNormals32 = 16, // 0x0010
-            PackedNormalsMask = PackedNormals32 | PackedNormals24 | PackedNormals16, // 0x001C
-            PackedTexCoords = 32, // 0x0020
-            ColorNoAlpha = 64, // 0x0040
-            PackedTangents = 128, // 0x0080
-        }
-
-        [Obsolete]
-        public bool ReadOldVersion(BinaryReader reader)
-        {
-            long position = reader.BaseStream.Position;
-            long signature = reader.ReadInt64();
-            long filesize = reader.ReadInt64();
-           
-            if (MeshSignature != signature && TriMeshSignature != signature)
-                throw new Exception($"signature not match for class {GetType()}");
-            
-            Name = reader.ReadString();
-            Topology = (Primitive)reader.ReadByte();
-
-  
-            Old_Compression compression = (Old_Compression)reader.ReadUInt16();
-
-            Transform = Matrix4x4f.Identity;
-
-            if (reader.ReadBoolean())
-                Transform = compression.HasFlag(Old_Compression.MatrixTRS) ? 
-                    Matrix4x4f.ComposeTRS(new Vector3f(reader), (Quaternion4f)new Vector4f(reader), new Vector3f(reader)) : new Matrix4x4f(reader);
-
-            
-            Vertices = new StructBuffer<Vector3f>(reader.ReadUnsafe<Vector3f>(reader.ReadInt32()));
-            TexCoords = new StructBuffer<Vector2f>(reader.ReadUnsafe<Vector2f>(reader.ReadInt32()));
-
-
-            if (compression.HasFlag(Old_Compression.PackedNormals24))
-            {
-                int count = reader.ReadInt32();
-                Normals = new StructBuffer<Vector3f>(count);
-                for (int i = 0; i < count; i++) Normals.Add(UnitSphericalPacker24.Decode(reader.ReadUInt24()));
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-
-            Colors = new StructBuffer<Color4b>(reader.ReadUnsafe<Color4b>(reader.ReadInt32()));
-
-            Tangents = new StructBuffer<Vector4f>(reader.ReadUnsafe<Vector4f>(reader.ReadInt32()));
-
-            //indices
-            if (!ReadSubMeshes(reader)) return false;
-
-            long num2 = reader.BaseStream.Position - position;
-            return true;
-        }
-
         public virtual bool Read(BinaryReader reader)
         {
             //header
@@ -233,8 +168,15 @@ namespace Common.Maths
             Normals = Packer.ReadNormals(reader);
             //Colors
             Colors = Packer.ReadColors(reader);
+            
+            
+            
             //tangents
-            Tangents = new StructBuffer<Vector4f>(reader.ReadUnsafe<Vector4f>(reader.ReadInt32()));
+            if (Version.Major<2)
+                Tangents = new StructBuffer<Vector4f>(reader.ReadUnsafe<Vector4f>(reader.ReadInt32()));
+            else
+                Tangents = Packer.ReadTangents(reader);
+           
             //bones
             BoneIds = new StructBuffer<Vector4b>(reader.ReadUnsafe<Vector4b>(reader.ReadInt32()));
             BoneWeights = new StructBuffer<Vector4b>(reader.ReadUnsafe<Vector4b>(reader.ReadInt32()));
@@ -244,16 +186,17 @@ namespace Common.Maths
             if (bytesize != end - begin) Debugg.Error($"Possible wrong byte size for {GetType()} class");
             return true;
         }
-        public virtual bool Write(BinaryWriter writer) => Write(writer, 0, 0, 0, 0, 0, 0);
+        public virtual bool Write(BinaryWriter writer) => Write(writer, 0, 0, 0, 0, 0, 0,0);
         
         public virtual bool Write(
             BinaryWriter writer,
-            CompressionTransform compression_m = 0,
-            CompressionIndices compression_i = 0,
-            CompressionVertices compression_v = 0,
-            CompressionNormals compression_n = 0,
-            CompressionTexCoord compression_t = 0,
-            CompressionColor compression_c = 0)
+            CompressionTransform comp_m = 0,
+            CompressionIndices comp_i = 0,
+            CompressionVertices comp_v = 0,
+            CompressionNormals comp_n = 0,
+            CompressionTexCoord comp_u = 0,
+            CompressionColor comp_c = 0,
+            CompressionTangents comp_t = 0)
         {
             long begin = writer.BaseStream.Position;
             writer.WriteLong(TriMeshSignature);
@@ -267,9 +210,9 @@ namespace Common.Maths
             if (!Transform.IsIdentity)
             {
                 writer.Write(true);
-                writer.WriteByte((byte)compression_m);
+                writer.WriteByte((byte)comp_m);
 
-                if (compression_m == CompressionTransform.MatrixTRS)
+                if (comp_m == CompressionTransform.MatrixTRS)
                 {
                     Transform.Decompose(out var t, out var r, out var s);
                     t.Write(writer);
@@ -281,27 +224,22 @@ namespace Common.Maths
             else writer.Write(false);
 
             //indices
-            if (!WriteSubMeshes(writer, compression_i)) return false;
+            if (!WriteSubMeshes(writer, comp_i)) return false;
 
             // vertices
-            Packer.WriteVertices(writer, Vertices, compression_v);
+            Packer.WriteVertices(writer, Vertices, comp_v);
 
             //texcoords
-            Packer.WriteTexCoords(writer, TexCoords, compression_t);
+            Packer.WriteTexCoords(writer, TexCoords, comp_u);
 
             //normals
-            Packer.WriteNormals(writer, Normals, compression_n);
+            Packer.WriteNormals(writer, Normals, comp_n);
 
             //colors
-            Packer.WriteColor(writer, Colors, compression_c);
+            Packer.WriteColor(writer, Colors, comp_c);
 
             //tangents
-            if (HasTangents) 
-            { 
-                writer.Write(Tangents.Count);
-                Tangents.Write(writer);
-            }
-            else writer.Write(0);
+            Packer.WriteTangents(writer, Tangents, comp_t);
 
             //bones
             if (HasSkins)

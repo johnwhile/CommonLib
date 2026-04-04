@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common.Clr", "Common.Clr\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_GraphicMath", "Test_GraphicMath\Test_GraphicMath.csproj", "{D05E3CC3-7A38-4865-8E5A-8E011498CE25}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_Code", "Test_Code\Test_Code.csproj", "{4E811941-0B3C-43C6-B55E-2EF4F0A58451}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -71,6 +73,11 @@ Global
 		{D05E3CC3-7A38-4865-8E5A-8E011498CE25}.Release|x64.Build.0 = Release|x64
 		{D05E3CC3-7A38-4865-8E5A-8E011498CE25}.Release|x86.ActiveCfg = Release|x86
 		{D05E3CC3-7A38-4865-8E5A-8E011498CE25}.Release|x86.Build.0 = Release|x86
+		{4E811941-0B3C-43C6-B55E-2EF4F0A58451}.Debug|x64.ActiveCfg = Debug|x64
+		{4E811941-0B3C-43C6-B55E-2EF4F0A58451}.Debug|x64.Build.0 = Debug|x64
+		{4E811941-0B3C-43C6-B55E-2EF4F0A58451}.Debug|x86.ActiveCfg = Debug|x64
+		{4E811941-0B3C-43C6-B55E-2EF4F0A58451}.Release|x64.ActiveCfg = Release|x64
+		{4E811941-0B3C-43C6-B55E-2EF4F0A58451}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

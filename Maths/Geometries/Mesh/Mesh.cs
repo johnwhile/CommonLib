@@ -34,7 +34,7 @@ namespace Common.Maths
 
         public List<SubMesh> SubMeshes;
 
-        public FileVersion Version = new FileVersion(1, 0, 1);
+        public FileVersion Version = new FileVersion(2, 0, 1);
 
         /// <summary>
         /// For converting in Triangles or Lines counts it depends by <see cref="Topology"/>
@@ -235,6 +235,39 @@ namespace Common.Maths
                 }
             }
             /// <summary>
+            /// specified for a vector3 normalized vector
+            /// </summary>
+            public static void WriteTangents(BinaryWriter writer, IEnumerable<Vector4f> array, CompressionTangents compression)
+            {
+                int count = 0;
+                if (array != null) count = array.Count();
+                writer.Write(count);
+
+                if (count < 1) return;
+                writer.WriteByte((byte)compression);
+
+                ushort normalize(float w) => (ushort)Mathelp.CLAMP((int)(w * short.MaxValue), -short.MaxValue, short.MaxValue);
+
+                switch (compression)
+                {
+                    case CompressionTangents.Normals16_WeightInt16:
+                        foreach (var tangent in array)
+                        {
+                            writer.Write(UnitSphericalPacker16.Encode(tangent));
+                            writer.Write(normalize(tangent.w));
+                        }
+                        break;
+                    case CompressionTangents.Normals24_WeightInt16:
+                        foreach (var tangent in array)
+                        {
+                            writer.WriteUInt24(UnitSphericalPacker24.Encode(tangent));
+                            writer.Write(normalize(tangent.w));
+                        }
+                        break;
+                    default: writer.Write(array); break;
+                }
+            }
+            /// <summary>
             /// specified for a vector2 uv
             /// </summary>
             public static void WriteTexCoords(BinaryWriter writer, IEnumerable<Vector2f> array, CompressionTexCoord compression)
@@ -274,18 +307,21 @@ namespace Common.Maths
                 if (count < 1) return;
                 writer.WriteByte((byte)compression);
 
+                bool transparency = false;
+                foreach (var c in array) if (c.a < 255) { transparency = true;break; }
+                if (!transparency) compression = CompressionColor.NoAlpha;
+
                 if (compression == CompressionColor.NoAlpha)
                 {
-                    foreach (var v in array)
+                    foreach (var c in array)
                     {
-                        writer.Write(v.r);
-                        writer.Write(v.g);
-                        writer.Write(v.b);
+                        writer.Write(c.r);
+                        writer.Write(c.g);
+                        writer.Write(c.b);
                     }
                 }
                 else writer.Write(array);
             }
-
             /// <summary>
             /// specified for a vector3 list
             /// </summary>
@@ -394,6 +430,38 @@ namespace Common.Maths
             }
 
 
+            public static StructBuffer<Vector4f> ReadTangents(BinaryReader reader)
+            {
+                int count = reader.ReadInt32();
+                if (count < 1) return null;
+                var comp = (CompressionTangents)reader.ReadByte();
+
+                StructBuffer<Vector4f> array = new StructBuffer<Vector4f>(count);
+
+                switch(comp)
+                {
+                    case CompressionTangents.Normals16_WeightInt16:
+                        for (int i = 0; i < count; i++)
+                        {
+                            Vector4f t = UnitSphericalPacker16.Decode(reader.ReadUInt16());
+                            t.w =  reader.ReadInt16()/ 32767.0f;
+                            array.Add(t);
+                        }
+                        break;
+                    case CompressionTangents.Normals24_WeightInt16:
+                        for (int i = 0; i < count; i++)
+                        {
+                            Vector4f t = UnitSphericalPacker24.Decode(reader.ReadUInt24());
+                            t.w = reader.ReadInt16() / 32767.0f;
+                            array.Add(t);
+                        }
+                        break;
+                    default:
+                        array.AddRange(reader.ReadUnsafe<Vector4f>(count));
+                        break;
+                }
+                return array;
+            }
 
 
         }
